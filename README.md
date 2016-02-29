@@ -1,4 +1,4 @@
-## A Python client library for Fastly 
+## A Python client library for Fastly
 
 www.fastly.com
 
@@ -9,7 +9,7 @@ import fastly
 # Connects to Fastly using API key.
 client = fastly.connect("your-api-key")
 
-# Need to fully authenticate to access all features. 
+# Need to fully authenticate to access all features.
 client.login("email@domain.com", "h4x0rp4ssw0rd")
 
 # Get your account details.
@@ -27,11 +27,10 @@ service = client.create_service(current_customer.id,
 	comment="A service for testing out the client.")
 
 # Create a new version of the service.
-service_version = client.create_service_version(service.id,
-	comment="A new version of this service.")
+service_version = client.create_service_version(service.id)
 
 # Create a domain.
-domain = client.create_domain(service.id, 
+domain = client.create_domain(service.id,
 	service_version.number,
 	"www.test.com",
 	comment="A new domain.")
