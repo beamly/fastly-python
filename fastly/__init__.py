@@ -3,27 +3,27 @@
 # Author: Chris Zacharias (chris@imgix.com)
 # Copyright (c) 2012, Zebrafish Labs Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
-# 	Redistributions of source code must retain the above copyright notice,
-# 	this list of conditions and the following disclaimer.
-# 
-# 	Redistributions in binary form must reproduce the above copyright notice,
-# 	this list of conditions and the following disclaimer in the documentation 
-# 	and/or other materials provided with the distribution.
-# 	
+#
+#   Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+#
+#   Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
 import httplib2
@@ -126,11 +126,16 @@ class FastlyConnection(object):
 		content = self._fetch("/service/%s/version/%d/backend" % (service_id, version_number))
 		return map(lambda x: FastlyBackend(self, x), content)
 
+	def create_service_version(self, service_id):
+		"""Create a new version of the service"""
 
-	def create_backend(self, 
+		content = self._fetch("/service/%s/version" % (service_id), method="POST")
+		return FastlyServiceVersion(self, content)
+
+	def create_backend(self,
 		service_id,
-		version_number, 
-		name, 
+		version_number,
+		name,
 		address,
 		use_ssl=False,
 		port=80,
@@ -199,9 +204,9 @@ class FastlyConnection(object):
 		return map(lambda x: FastlyCacheSettings(self, x), content)
 
 
-	def create_cache_settings(self, 
-		service_id, 
-		version_number, 
+	def create_cache_settings(self,
+		service_id,
+		version_number,
 		name,
 		action,
 		ttl=None,
@@ -244,13 +249,13 @@ class FastlyConnection(object):
 		return map(lambda x: FastlyCondition(self, x), content)
 
 
-	def create_condition(self, 
-		service_id, 
+	def create_condition(self,
+		service_id,
 		version_number,
 		name,
 		_type,
 		statement,
-		priority="10", 
+		priority="10",
 		comment=None):
 		"""Creates a new condition."""
 		body = self._formdata({
@@ -337,8 +342,8 @@ class FastlyConnection(object):
 		return map(lambda x: FastlyDirector(self, x), content)
 
 
-	def create_director(self, service_id, version_number, 
-		name, 
+	def create_director(self, service_id, version_number,
+		name,
 		quorum=75,
 		_type=FastlyDirectorType.RANDOM,
 		retries=5,
@@ -386,7 +391,7 @@ class FastlyConnection(object):
 		content = self._fetch("/service/%s/version/%d/director/%s/backend/%s" % (service_id, version_number, director_name, backend_name), method="POST")
 		return FastlyDirectorBackend(self, content)
 
-	
+
 	def delete_director_backend(self, service_id, version_number, director_name, backend_name):
 		"""Deletes the relationship between a Backend and a Director. The Backend is no longer considered a member of the Director and thus will not have traffic balanced onto it from this Director."""
 		content = self._fetch("/service/%s/version/%d/director/%s/backend/%s" % (service_id, version_number, director_name, backend_name), method="DELETE")
@@ -400,9 +405,9 @@ class FastlyConnection(object):
 
 
 	def create_domain(self,
-		service_id, 
-		version_number, 
-		name, 
+		service_id,
+		version_number,
+		name,
 		comment=None):
 		"""Create a domain for a particular service and version."""
 		body = self._formdata({
@@ -503,7 +508,7 @@ class FastlyConnection(object):
 
 
 	def create_healthcheck(self,
-		service_id, 
+		service_id,
 		version_number,
 		name,
 		host,
@@ -553,9 +558,9 @@ class FastlyConnection(object):
 		return self._status(content)
 
 
-	def	purge_url(self, host, path):
+	def purge_url(self, host, path):
 		"""Purge an individual URL."""
-		content = self._fetch(path, method="PURGE", headers={ "Host": host }) 
+		content = self._fetch(path, method="PURGE", headers={ "Host": host })
 		return FastlyPurge(self, content)
 
 
@@ -673,7 +678,7 @@ class FastlyConnection(object):
 		}, FastlyService.FIELDS)
 		content = self._fetch("/service", method="POST", body=body)
 		return FastlyService(self, content)
-		
+
 
 	def list_services(self):
 		"""List Services."""
@@ -931,7 +936,7 @@ class FastlyConnection(object):
 		}, FastlyVersion.FIELDS)
 		content = self._fetch("/service/%s/version" % service_id, method="POST", body=body)
 		return FastlyVersion(self, content)
-		
+
 
 	def list_versions(self, service_id):
 		content = self._fetch("/service/%s/version"% service_id)
@@ -1025,14 +1030,14 @@ class FastlyConnection(object):
 	def delete_version(self, service_id, version_number):
 		content = self._fetch("/service/%s/version/%d" % (service_id, version_number), method="DELETE")
 		return self._status(content)
-	
+
 
 	def _status(self, status):
 		if not isinstance(status, FastlyStatus):
 			status = FastlyStatus(self, status)
 
 		if status.status != "ok":
-			raise FastlyError("FastlyError: %s" % status.msg) 
+			raise FastlyError("FastlyError: %s" % status.msg)
 
 		return True
 
@@ -1050,7 +1055,7 @@ class FastlyConnection(object):
 	def _fetch(self, url, method="GET", body=None, headers={}):
 		hdrs = {}
 		hdrs.update(headers)
-		
+
 		print("Fetch: %s %s" % (method, url))
 		if body:
 			print("Body: %s" % body)
@@ -1132,7 +1137,7 @@ class IServiceVersionObject(IServiceObject):
 
 
 class FastlyObject(object):
-	def __init__(self, conn, data):  
+	def __init__(self, conn, data):
 		self._conn = conn
 		self._data = data or {}
 
@@ -1144,7 +1149,7 @@ class FastlyObject(object):
 
 	def __str__(self):
 		return str(self._data)
-	
+
 	def __repr__(self):
 		return repr(self._data)
 
@@ -1220,9 +1225,20 @@ class FastlyCacheSettings(FastlyObject, IServiceVersionObject):
 		"cache_condition",
 	]
 
+class FastlyServiceVersion(FastlyObject, IServiceVersionObject):
+	FIELDS = [
+		"number",
+		"service_id",
+		"comment",
+		"testing",
+		"staging",
+		"deployed",
+		"active",
+		"locked"
+	]
 
 class FastlyCondition(FastlyObject, IServiceVersionObject):
-	"""Conditions are used to control when and how other objects are used in a service configuration. They contain a statement that evaluates to either true or false and is used to determine whether the condition is met. 
+	"""Conditions are used to control when and how other objects are used in a service configuration. They contain a statement that evaluates to either true or false and is used to determine whether the condition is met.
 
 	Depending on the type of the condition, the statment field can make reference to the Varnish Variables req, resp, and/or beresp."""
 	FIELDS = [
@@ -1467,12 +1483,12 @@ class FastlySyslog(FastlyObject, IServiceVersionObject, IDateStampedObject):
 
 class FastlyUser(FastlyObject, IDateStampedObject):
 	FIELDS = [
-		"name", 
-		"created_at", 
-		"updated_at", 
-		"role", 
-		"id", 
-		"email_hash", 
+		"name",
+		"created_at",
+		"updated_at",
+		"role",
+		"id",
+		"email_hash",
 		"customer_id",
 		"require_new_password",
 		"login",
@@ -1567,3 +1583,4 @@ def connect(api_key, username=None, password=None):
 	if username is not None and password is not None:
 		conn.login(username, password)
 	return conn
+
